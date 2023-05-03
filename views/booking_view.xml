@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="work_order_form_view" model="ir.ui.view">
+        <field name="name">work_order_form_view</field>
+        <field name="model">work.order</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button type="object" name="func_start_work" string="Start Work" class="oe_highlight" attrs="{'invisible':[('state', '!=', 'pending')]}"/>
+                    <button type="object" name="func_end_work" string="End Work" class="oe_highlight" attrs="{'invisible':[('state', '!=', 'in_progress')]}"/>
+                    <button type="object" name="func_reset" string="Reset" attrs="{'invisible':[('state', '!=', 'in_progress')]}"/>
+                    <button name="%(action_work_order_cancel)d" states="pending,in_progress,cancelled,done" string="Cancel" type="action" groups="base.group_user"/>
+                    <field name="state" widget="statusbar" statusbar_visible="pending,in_progress"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="wo_number" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="team" string="Team Name"/>
+                            <field name="team_leader" string="Team Leader"/>
+                            <field name="planned_start" string="Planned Start"/>
+                            <field name="planned_end" string="Planned End"/>
+                        </group>
+                        <group>
+                            <field name="reference" string="Reference"/>
+                            <field name="date_start" string="Date Start"/>
+                            <field name="date_end" string="Date End"/>
+                        </group>
+                        <field name="notes" string="Notes"/>
+                    </group>
+                    <notebook>
+                        <page string="Team Members">
+                            <field name="team_members" string="Team Members" widget="many2many_tags"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_order_form_inherit" model="ir.ui.view">
+        <field name="name">view_order_form_inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr='//header/button[@name="action_confirm"]' position='after'>
+                <button type="object" name="func_check" string="Check"/>
+            </xpath>
+            <xpath expr='//field[@name="partner_id"]' position='after'>
+                <field name="team" string="Team" required="1"/>
+                <field name="team_leader" string="Team Leader" required="1"/>
+                <field name="team_members" string="Team Members" widget="many2many_tags" required="1"/>
+            </xpath>
+            <xpath expr='//field[@name="date_order"]' position='before'>
+                <field name="work_order" string="WO" readonly="1"/>
+                <field name="booking_start" string="Booking Start" required="1"/>
+                <field name="booking_end" string="Booking End" required="1"/>
+            </xpath>
+            <xpath expr='//field[@name="payment_term_id"]' position='after'>
+                <field name="is_booking_order" string="Is booking order"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="service_team_form_view" model="ir.ui.view">
+        <field name="name">service_team_form_view</field>
+        <field name="model">service.team</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="team_name" string="Team Name"/>
+                            <field name="team_leader" string="Team Leader"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Team Members">
+                            <field name="team_members" string="Team Members"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="service_team_tree" model="ir.ui.view">
+        <field name="name">service_team_tree</field>
+        <field name="model">service.team</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="team_name"/>
+                <field name="team_leader"/>
+                <field name="team_members"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="work_order_view_graph" model="ir.ui.view">
+        <field name="name">work_order_view_graph</field>
+        <field name="model">work.order</field>
+        <field name="arch" type="xml">
+            <graph string="Work Analysis" stacked="True">
+                <field name="state" type="col"/>
+                <field name="team" type="row"/>
+            </graph>
+        </field>
+    </record>
+
+    <record  id="work_order_calendar_view" model="ir.ui.view">
+        <field name="name">work_order_calendar_view</field>
+        <field name="model">work.order</field>
+        <field name="priority" eval="2"/>
+        <field name="arch" type="xml">
+            <calendar string="Leads Generation" date_start="planned_start" color="team">
+                <field name="planned_start" />
+                <field name="planned_end" />
+            </calendar>
+        </field>
+    </record>
+
+    <record id="work_order_tree" model="ir.ui.view">
+        <field name="name">work_order_tree</field>
+        <field name="model">work.order</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="wo_number"/>
+                <field name="reference"/>
+                <field name="team"/>
+                <field name="team_leader"/>
+                <field name="team_members"/>
+                <field name="planned_start"/>
+                <field name="planned_end"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="state"/>
+                <field name="notes"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="work_order_kanban" model="ir.ui.view">
+        <field name="name">work_order_kanban</field>
+        <field name="model">work.order</field>
+        <field name="arch" type="xml">
+            <kanban>
+                    <field name="wo_number"/>
+                    <field name="team"/>
+                    <field name="team_leader"/>
+                    <field name="planned_start"/>
+                    <field name="planned_end"/>
+                    <field name="state"/>
+                    <templates>
+                        <t t-name="kanban-box">
+                            <div class="oe_product_vignette">
+                                <div class="oe_product_desc">
+                                    <h4>
+                                        <a type="edit">
+                                            <field name="wo_number"></field>
+                                        </a>
+                                    </h4>
+                                    <ul>
+                                        <li>Team : <field name="team"></field></li>
+                                        <li>Team leader :  <field name="team_leader"></field></li>
+                                        <li>Planned start : <field name="planned_start"></field></li>
+                                        <li>Planned End : <field name="planned_end"></field></li>
+                                        <li>State : <field name="state"></field></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </t>
+                    </templates>
+                </kanban>
+        </field>
+    </record>
+
+
+    <record id="action_booking_order_booking_order" model="ir.actions.act_window">
+        <field name="name">Booking Order</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">tree,kanban,form,graph,pivot</field>
+        <field name="domain">[('is_booking_order','=',True)]</field>
+        <field name="help" type="html">
+            <p>
+                The sale order is empty
+            </p>
+        </field>
+    </record>
+
+
+        <record id="action_booking_order_work_order" model="ir.actions.act_window">
+            <field name="name">Work Order</field>
+            <field name="res_model">work.order</field>
+            <field name="view_mode">tree,kanban,form,graph,pivot,calendar</field>
+            <field name="help" type="html">
+                <p>
+                The work order is empty
+              </p>
+            </field>
+        </record>
+
+        <record id="action_booking_order_service_team" model="ir.actions.act_window">
+            <field name="name">Service Team</field>
+            <field name="res_model">service.team</field>
+            <field name="view_mode">tree,kanban,form,graph,pivot</field>
+            <field name="help" type="html">
+                <p>
+                The service team is empty
+              </p>
+            </field>
+        </record>
+
+        <menuitem id="menu_booking_order_root" name="Booking Order" sequence="100" />
+
+        <menuitem id="menu_booking_order_booking" name="Booking" sequence="1" parent="menu_booking_order_root" groups="base.group_user"/>
+        <menuitem id="menu_booking_order_booking_order" name="Booking Order" sequence="1" parent="menu_booking_order_booking" action="booking_order.action_booking_order_booking_order"/>
+        <menuitem id="menu_booking_order_work_order" name="Work Order" sequence="2" parent="menu_booking_order_booking" action="action_booking_order_work_order"/>
+        <menuitem id="menu_booking_order_service_team" name="Service Team" sequence="3" parent="menu_booking_order_booking" action="action_booking_order_service_team"/>
+</odoo>

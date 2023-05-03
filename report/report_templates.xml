@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="report_work_order_template" >
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <div class="page">
+                    <h2>
+                        <span t-field="doc.wo_number"/>
+                    </h2>
+                    <tr>
+                        <td><strong >Team Name:</strong></td>
+                        <td><p t-field="doc.team"/></td>
+                        <td><strong >Team Leader:</strong></td>
+                        <td><p t-field="doc.team_leader"/></td>
+                    </tr>
+                    <tr>
+                        <td><strong >Booking order ref:</strong></td>
+                        <td><p t-field="doc.team"/></td>
+                        <td><strong >Date:</strong></td>
+                        <td><p t-field="doc.date_start"/></td>
+                        <td><p t-field="doc.date_end"/></td>
+                    </tr>
+                    NOTES:
+                    <p t-field="doc.notes"/>
+                    <div class="bottom">
+                        <strong >Signature: </strong>
+                    </div>
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>
